@@ -211,7 +211,7 @@ class ArCoreController {
 
   void _handleNodeRotationChanged(ArCoreNode node) {
     _channel.invokeMethod<void>('nodeRotationChanged',
-        _getHandlerParams(node, convertVector4ToMap(node.rotation.value)));
+        _getHandlerParams(node, convertVector4ToMap(node.rotation?.value)));
   }
 
   Map<String, dynamic> _getHandlerParams(
