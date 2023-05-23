@@ -17,12 +17,14 @@ import com.difrancescogianmarco.arcore_flutter_plugin.flutter_models.FlutterArCo
 import com.difrancescogianmarco.arcore_flutter_plugin.models.RotatingNode
 import com.difrancescogianmarco.arcore_flutter_plugin.utils.ArCoreUtils
 import com.difrancescogianmarco.arcore_flutter_plugin.utils.DecodableUtils.Companion.parseVector3
+import com.difrancescogianmarco.arcore_flutter_plugin.utils.DecodableUtils.Companion.parseQuaternion
 import com.google.ar.core.*
 import com.google.ar.core.exceptions.CameraNotAvailableException
 import com.google.ar.core.exceptions.UnavailableException
 import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationException
 import com.google.ar.sceneform.*
 import com.google.ar.sceneform.math.Vector3
+import com.google.ar.sceneform.math.parseQuaternion
 import com.google.ar.sceneform.rendering.ModelRenderable
 import com.google.ar.sceneform.rendering.Texture
 import com.google.ar.sceneform.ux.AugmentedFaceNode
@@ -404,7 +406,7 @@ class ArCoreView(val activity: Activity, context: Context, messenger: BinaryMess
             debugLog(" The plane renderer (enablePlaneRenderer) is set to " + enablePlaneRenderer.toString())
             arSceneView!!.planeRenderer.isVisible = false
         }
-        
+
         result.success(null)
     }
 
@@ -494,15 +496,17 @@ class ArCoreView(val activity: Activity, context: Context, messenger: BinaryMess
 
     fun updateRotation(call: MethodCall, result: MethodChannel.Result) {
         val name = call.argument<String>("name")
-        val node = arSceneView?.scene?.findByName(name) as RotatingNode
-        debugLog("rotating node:  $node")
-        val degreesPerSecond = call.argument<Double?>("degreesPerSecond")
-        debugLog("rotating value:  $degreesPerSecond")
-        if (degreesPerSecond != null) {
-            debugLog("rotating value:  ${node.degreesPerSecond}")
-            node.degreesPerSecond = degreesPerSecond.toFloat()
-        }
+        val node = arSceneView?.scene?.findByName(name) as Node
+        node.localRotation = parseQuaternion(call.arguments as HashMap<String, Double>)
         result.success(null)
+        // debugLog("rotating node:  $node")
+        // val degreesPerSecond = call.argument<Double?>("degreesPerSecond")
+        // debugLog("rotating value:  $degreesPerSecond")
+        // if (degreesPerSecond != null) {
+        //     debugLog("rotating value:  ${node.degreesPerSecond}")
+        //     node.degreesPerSecond = degreesPerSecond.toFloat()
+        // }
+        // result.success(null)
     }
 
     fun updateMaterials(call: MethodCall, result: MethodChannel.Result) {
@@ -634,6 +638,4 @@ class ArCoreView(val activity: Activity, context: Context, messenger: BinaryMess
         }
 
     }*/
-
-    
 }
