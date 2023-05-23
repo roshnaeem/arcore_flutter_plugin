@@ -23,7 +23,6 @@ import com.google.ar.core.exceptions.CameraNotAvailableException
 import com.google.ar.core.exceptions.UnavailableException
 import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationException
 import com.google.ar.sceneform.*
-import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.math.Quaternion
 import com.google.ar.sceneform.rendering.ModelRenderable
@@ -496,12 +495,13 @@ class ArCoreView(val activity: Activity, context: Context, messenger: BinaryMess
         val name = call.argument<String>("name")
         val node = arSceneView?.scene?.findByName(name) as Node
         node?.localPosition = parseVector3(call.arguments as HashMap<String, Any>) ?: Vector3()
+        node?.localRotation = parseQuaternion(call.arguments as? HashMap<String, Double>) ?: Quaternion()
         result.success(null)
     }
 
      fun updateNodeRotation(call: MethodCall, result: MethodChannel.Result) {
         val name = call.argument<String>("name")
-        val node = arSceneView?.scene?.findByName(name)
+        val node = arSceneView?.scene?.findByName(name) as Node
         node?.localRotation = parseQuaternion(call.arguments as? HashMap<String, Double>) ?: Quaternion()
         result.success(null)
     }
