@@ -493,14 +493,14 @@ class ArCoreView(val activity: Activity, context: Context, messenger: BinaryMess
 
     fun updatePosition(call: MethodCall, result: MethodChannel.Result) {
         val name = call.argument<String>("name")
-        val node = arSceneView?.scene?.findByName(name) as Node
+        val node = arSceneView?.scene?.findByName(name)
         node?.localPosition = parseVector3(call.arguments as HashMap<String, Any>) ?: Vector3()
         result.success(null)
     }
 
      fun updateNodeRotation(call: MethodCall, result: MethodChannel.Result) {
         val name = call.argument<String>("name")
-        val node = arSceneView?.scene?.findByName(name) as Node
+        val node = arSceneView?.scene?.findByName(name)
         node?.localRotation = parseQuaternion(call.arguments as? HashMap<String, Double>) ?: Quaternion()
         result.success(null)
     }
