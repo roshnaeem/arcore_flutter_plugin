@@ -495,7 +495,6 @@ class ArCoreView(val activity: Activity, context: Context, messenger: BinaryMess
         val name = call.argument<String>("name")
         val node = arSceneView?.scene?.findByName(name) as Node
         node?.localPosition = parseVector3(call.arguments as HashMap<String, Any>) ?: Vector3()
-        node?.localRotation = parseQuaternion(call.arguments as? HashMap<String, Double>) ?: Quaternion()
         result.success(null)
     }
 
