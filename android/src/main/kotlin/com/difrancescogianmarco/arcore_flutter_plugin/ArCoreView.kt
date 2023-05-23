@@ -23,6 +23,7 @@ import com.google.ar.core.exceptions.CameraNotAvailableException
 import com.google.ar.core.exceptions.UnavailableException
 import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationException
 import com.google.ar.sceneform.*
+import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.math.Quaternion
 import com.google.ar.sceneform.rendering.ModelRenderable
@@ -198,9 +199,12 @@ class ArCoreView(val activity: Activity, context: Context, messenger: BinaryMess
                 debugLog(" positionChanged")
                 updatePosition(call, result)
             }
+            "nodeRotationChanged" -> {
+                debugLog(" nodeRotationChanged")
+                updateNodeRotation(call, result)
+            }
             "rotationChanged" -> {
                 debugLog(" rotationChanged")
-                // val map = call.arguments as HashMap<String, Double>
                 updateRotation(call, result)
 
             }
@@ -490,24 +494,29 @@ class ArCoreView(val activity: Activity, context: Context, messenger: BinaryMess
 
     fun updatePosition(call: MethodCall, result: MethodChannel.Result) {
         val name = call.argument<String>("name")
-        val node = arSceneView?.scene?.findByName(name) as FlutterArCoreNode
-        node.position = parseVector3(call.arguments as HashMap<String, Any>)
+        val node = arSceneView?.scene?.findByName(name) as Node
+        node?.localPosition = parseVector3(call.arguments as HashMap<String, Any>) ?: Vector3()
+        result.success(null)
+    }
+
+     fun updateNodeRotation(call: MethodCall, result: MethodChannel.Result) {
+        val name = call.argument<String>("name")
+        val node = arSceneView?.scene?.findByName(name)
+        node?.localRotation = parseQuaternion(call.arguments as? HashMap<String, Double>) ?: Quaternion()
         result.success(null)
     }
 
     fun updateRotation(call: MethodCall, result: MethodChannel.Result) {
         val name = call.argument<String>("name")
-        val node = arSceneView?.scene?.findByName(name) as FlutterArCoreNode
-        node.rotation = parseQuaternion(call.arguments as HashMap<String, Double>)
+        val node = arSceneView?.scene?.findByName(name) as RotatingNode
+        debugLog("rotating node:  $node")
+        val degreesPerSecond = call.argument<Double?>("degreesPerSecond")
+        debugLog("rotating value:  $degreesPerSecond")
+        if (degreesPerSecond != null) {
+            debugLog("rotating value:  ${node.degreesPerSecond}")
+            node.degreesPerSecond = degreesPerSecond.toFloat()
+        }
         result.success(null)
-        // debugLog("rotating node:  $node")
-        // val degreesPerSecond = call.argument<Double?>("degreesPerSecond")
-        // debugLog("rotating value:  $degreesPerSecond")
-        // if (degreesPerSecond != null) {
-        //     debugLog("rotating value:  ${node.degreesPerSecond}")
-        //     node.degreesPerSecond = degreesPerSecond.toFloat()
-        // }
-        // result.success(null)
     }
 
     fun updateMaterials(call: MethodCall, result: MethodChannel.Result) {

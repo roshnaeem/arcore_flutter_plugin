@@ -187,6 +187,8 @@ class ArCoreController {
   void _addListeners(ArCoreNode node) {
     node.position?.addListener(() => _handlePositionChanged(node));
     node.shape?.materials.addListener(() => _updateMaterials(node));
+    node.rotation.addListener(() => _handleNodeRotationChanged(node));
+    node.scale.addListener(() => _handleScaleChanged(node));
 
     if (node is ArCoreRotatingNode) {
       node.degreesPerSecond.addListener(() => _handleRotationChanged(node));
@@ -206,6 +208,16 @@ class ArCoreController {
   void _updateMaterials(ArCoreNode node) {
     _channel.invokeMethod<void>(
         'updateMaterials', _getHandlerParams(node, node.shape!.toMap()));
+  }
+
+  void _handleNodeRotationChanged(ArCoreNode node) {
+    _channel.invokeMethod<void>('nodeRotationChanged',
+        _getHandlerParams(node, convertVector4ToMap(node.rotation.value)));
+  }
+
+  void _handleScaleChanged(ArCoreNode node) {
+    _channel.invokeMethod<void>('scaleChanged',
+        _getHandlerParams(node, convertVector3ToMap(node.scale.value)));
   }
 
   Map<String, dynamic> _getHandlerParams(
