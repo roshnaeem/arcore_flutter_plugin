@@ -200,6 +200,7 @@ class ArCoreView(val activity: Activity, context: Context, messenger: BinaryMess
             }
             "rotationChanged" -> {
                 debugLog(" rotationChanged")
+                // val map = call.arguments as HashMap<String, Double>
                 updateRotation(call, result)
 
             }
@@ -489,14 +490,14 @@ class ArCoreView(val activity: Activity, context: Context, messenger: BinaryMess
 
     fun updatePosition(call: MethodCall, result: MethodChannel.Result) {
         val name = call.argument<String>("name")
-        val node = arSceneView?.scene?.findByName(name) as Node
+        val node = arSceneView?.scene?.findByName(name) as FlutterArCoreNode
         node.localPosition = parseVector3(call.arguments as HashMap<String, Any>)
         result.success(null)
     }
 
     fun updateRotation(call: MethodCall, result: MethodChannel.Result) {
         val name = call.argument<String>("name")
-        val node = arSceneView?.scene?.findByName(name) as Node
+        val node = arSceneView?.scene?.findByName(name) as FlutterArCoreNode
         node.localRotation = parseQuaternion(call.arguments as HashMap<String, Double>)
         result.success(null)
         // debugLog("rotating node:  $node")
